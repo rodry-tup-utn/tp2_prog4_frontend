@@ -1,17 +1,17 @@
 import { FilaParticipante } from "../components/FilaParticipante";
-import { useParticipantes } from "../hooks/useParticipantes";
+import { useApi } from "../hooks/useApi";
 
 export const ListaParticipantes = () => {
-  const { participantes, loading, error } = useParticipantes();
+  const { participantes, loadingParticipantes, errorParticipantes } = useApi();
 
-  if (loading) {
+  if (loadingParticipantes) {
     return <div className="text-center py-10">Cargando lista...</div>;
   }
 
-  if (error) {
+  if (errorParticipantes) {
     return (
       <div className="text-2xl bg-red-100 rounded-2xl text-center py-10 text-red-600">
-        Error al cargar participantes: {error}
+        Error al cargar participantes: {errorParticipantes}
       </div>
     );
   }

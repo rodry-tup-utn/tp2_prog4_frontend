@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router-dom";
-import type { IOpciones } from "../types/opciones";
 import type { IUsuario } from "../types/usuario";
 import { useApi } from "../hooks/useApi";
 
@@ -200,8 +199,8 @@ export const FormularioRegistro = () => {
                   <input
                     type="checkbox"
                     id="terminos"
-                    name="acepta_terminos"
-                    onChange={handleChangeInput}
+                    name="tecnologias"
+                    onChange={() => handleTechChange(tecnologia)}
                     className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
                     checked={formData.tecnologias.includes(tecnologia)}
                   />
@@ -216,8 +215,10 @@ export const FormularioRegistro = () => {
             <input
               type="checkbox"
               id="terminos"
+              name="acepta_terminos"
               className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
               checked={formData.acepta_terminos}
+              onChange={handleChangeInput}
             />
             <label
               htmlFor="terminos"

@@ -1,0 +1,34 @@
+name: Validacion Frontend
+
+on:
+  push:
+    branches: ["main", "master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1 descarga tu código
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # 2 instalacion Node
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 3 instalacion pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      # 4 instalacion de dependencias
+      - name: Instalar dependencias
+        run: pnpm install
+
+      # 5.ejecution del build
+      - name: Verificar TypeScript y Compilar
+        run: pnpm build

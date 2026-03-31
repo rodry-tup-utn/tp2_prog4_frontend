@@ -3,16 +3,18 @@ import { api } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import type { IOpciones } from "../types/opciones";
 import type { IUsuario } from "../types/usuario";
+import { useApi } from "../hooks/useApi";
 
 export const FormularioRegistro = () => {
   const navigate = useNavigate();
+  const { opciones, loadingOpciones, errorOpciones } = useApi();
+
   const labelClass = "text-sm font-semibold text-gray-700";
   const inputClass =
     "border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all";
   const selectClass =
     "border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-700";
-  const [opciones, setOpciones] = useState<IOpciones | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+
   const [formData, setFormData] = useState<Omit<IUsuario, "id">>({
     nombre: "",
     email: "",
@@ -60,47 +62,33 @@ export const FormularioRegistro = () => {
       await api.registrarUsuario(formData);
       alert("Usuario registrado con exito");
       navigate("/participantes");
-      navigate;
     } catch (error) {
       console.error("No se pudo registrar el usuario", error);
       alert("Ocurrio un error al registrar al usuario");
     }
   };
 
-  useEffect(() => {
-    const fetchOpciones = async () => {
-      try {
-        const res = await api.obtenerOpciones();
-        setOpciones(res);
-      } catch (error) {
-        console.error("Error cargando opciones:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOpciones();
-  }, []);
+  if (errorOpciones) {
+    return (
+      <div className="text-center font-semibold text-red-500 py-10">
+        No se pudo conectar a la API. Verifica que tu backend esté corriendo.
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border border-gray-100 min-h-[500px]">
+    <div className="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto border border-gray-100 min-h-[125]">
       <h2 className="text-2xl font-bold text-blue-900 mb-6 border-b border-gray-200 pb-3">
         Registro de Participante
       </h2>
 
-      {isLoading && (
+      {loadingOpciones && (
         <div className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
         </div>
       )}
 
-      {!isLoading && !opciones && (
-        <div className="text-center font-semibold text-red-500 py-10">
-          No se pudo conectar a la API. Verifica que tu backend esté corriendo.
-        </div>
-      )}
-
-      {!isLoading && opciones && (
+      {!loadingOpciones && opciones && (
         <form
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           onSubmit={handleRegistrarUsuario}
@@ -114,6 +102,7 @@ export const FormularioRegistro = () => {
               onChange={handleChangeInput}
               id="nombre"
               name="nombre"
+              value={formData.nombre}
             />
           </div>
 
@@ -126,6 +115,7 @@ export const FormularioRegistro = () => {
               className={inputClass}
               placeholder="correo@ejemplo.com"
               onChange={handleChangeInput}
+              value={formData.email}
             />
           </div>
 
@@ -139,6 +129,7 @@ export const FormularioRegistro = () => {
               className={inputClass}
               placeholder="Ingresa tu edad"
               onChange={handleChangeInput}
+              value={formData.edad}
             />
           </div>
 
@@ -149,6 +140,7 @@ export const FormularioRegistro = () => {
               onChange={handleChangeInput}
               id="pais"
               name="pais"
+              value={formData.pais}
             >
               <option value="">Seleccione un país</option>
               {opciones.paises.map((pais) => {
@@ -168,6 +160,7 @@ export const FormularioRegistro = () => {
               name="modalidad"
               className={selectClass}
               onChange={handleChangeInput}
+              value={formData.modalidad}
             >
               <option value="">Seleciona modalidad</option>
               {opciones.modalidades.map((modalidad) => (
@@ -185,6 +178,7 @@ export const FormularioRegistro = () => {
               onChange={handleChangeInput}
               id="nivel"
               name="nivel"
+              value={formData.nivel}
             >
               <option value="">Selecciona tu nivel</option>
               {opciones.niveles.map((nivel) => (
@@ -204,10 +198,12 @@ export const FormularioRegistro = () => {
                   className="flex items-center gap-2 cursor-pointer hover:text-blue-700 transition-colors"
                 >
                   <input
-                    id="tecnologias"
                     type="checkbox"
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer"
-                    onChange={() => handleTechChange(tecnologia)}
+                    id="terminos"
+                    name="acepta_terminos"
+                    onChange={handleChangeInput}
+                    className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
+                    checked={formData.tecnologias.includes(tecnologia)}
                   />
                   <span className="font-medium">{tecnologia}</span>
                 </label>
@@ -221,6 +217,7 @@ export const FormularioRegistro = () => {
               type="checkbox"
               id="terminos"
               className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
+              checked={formData.acepta_terminos}
             />
             <label
               htmlFor="terminos"

@@ -1,28 +1,20 @@
-import { useEffect, useState } from "react";
-import { api } from "../services/api";
-import type { IUsuario } from "../types/usuario";
 import { FilaParticipante } from "../components/FilaParticipante";
+import { useParticipantes } from "../hooks/useParticipantes";
 
 export const ListaParticipantes = () => {
-  const [participantes, setParticipantes] = useState<IUsuario[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { participantes, loading, error } = useParticipantes();
 
-  useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        const data = await api.obtenerUsuarios();
-        setParticipantes(data);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    cargarDatos();
-  }, []);
-
-  if (loading)
+  if (loading) {
     return <div className="text-center py-10">Cargando lista...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-2xl bg-red-100 rounded-2xl text-center py-10 text-red-600">
+        Error al cargar participantes: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
@@ -32,7 +24,6 @@ export const ListaParticipantes = () => {
         </h2>
       </div>
 
-      {/* Contenedor con scroll horizontal para móviles */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-50 uppercase text-xs font-semibold text-gray-500 border-b border-gray-200">

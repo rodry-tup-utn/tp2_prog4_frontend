@@ -9,7 +9,7 @@ function App() {
     <>
       <div className="min-h-screen flex flex-col bg-gray-50">
         <NavBar />
-        <main className="grow w-full max-w-6xl mx-auto px-6 py-8">
+        <main className="grow w-full mx-auto px-6 py-8">
           <Routes>
             <Route path="/" element={<FormularioRegistro />} />
 

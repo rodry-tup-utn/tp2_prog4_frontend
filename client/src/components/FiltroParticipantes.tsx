@@ -22,11 +22,15 @@ export const FiltroParticipantes = ({
     });
   };
 
+  const handleEliminarFiltros = () => {
+    setFiltros({ busqueda: "", modalidad: "", nivel: "", tecnologia: "" });
+  };
+
   const selectClass =
     "border border-gray-200 rounded-xl p-2.5 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-gray-50 p-5 rounded-2xl border border-gray-100">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 bg-gray-50 p-5 rounded-2xl border border-gray-100">
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-gray-500 uppercase ml-1">
           Buscar por nombre
@@ -97,6 +101,19 @@ export const FiltroParticipantes = ({
             </option>
           ))}
         </select>
+      </div>
+      <div className="flex flex-col">
+        <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+          Eliminar Filtros
+        </label>
+        <div className="flex justify-center">
+          <button
+            className="bg-teal-700 text-white tracking-wider rounded-xl py-2 px-6 hover:cursor-pointer transform ease-in-out hover:bg-teal-800"
+            onClick={() => handleEliminarFiltros()}
+          >
+            🗑️ Limpiar
+          </button>
+        </div>
       </div>
     </div>
   );

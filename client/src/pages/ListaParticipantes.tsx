@@ -69,12 +69,12 @@ export const ListaParticipantes = () => {
       </div>
       <div className="p-6 bg-blue-900 rounded-xl flex flex-row items-center justify-around">
         <h2 className="text-xl font-bold text-white">Participantes</h2>
-        <p className="p-3 rounded-2xl bg-blue-500 text-white font-bold">
-          Total registrados:{participantes.length}
-        </p>
-        <p className="p-3 rounded-2xl bg-blue-500 text-white font-bold">
-          Total mostrados: {participantesFiltrados.length}{" "}
-        </p>
+        <span className="p-3 rounded-2xl bg-blue-500 text-white font-bold">
+          Total registrados: {participantes.length}
+        </span>
+        <span className="p-3 rounded-2xl bg-blue-500 text-white font-bold">
+          Total mostrados: {participantesFiltrados.length}
+        </span>
       </div>
 
       <div className="overflow-x-auto">
@@ -103,9 +103,9 @@ export const ListaParticipantes = () => {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-6 py-10 text-center text-gray-500 italic"
+                    className="px-6 py-10 text-center text-gray-800 italic"
                   >
-                    No hay participantes registrados aún.
+                    No se encontraron participantes
                   </td>
                 </tr>
               )}
@@ -113,15 +113,23 @@ export const ListaParticipantes = () => {
           </table>
         )}
         {vista == "tarjetas" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {participantesFiltrados.map((participante) => (
-              <CardParticipante
-                key={participante.id || participante.nombre}
-                participante={participante}
-                handleEliminarParticipante={eliminarParticipante}
-              />
-            ))}
-          </div>
+          <>
+            {participantesFiltrados.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {participantesFiltrados.map((participante) => (
+                  <CardParticipante
+                    key={participante.id || participante.nombre}
+                    participante={participante}
+                    handleEliminarParticipante={eliminarParticipante}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 text-gray-600 italic text-center">
+                No se encontraron participantes
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

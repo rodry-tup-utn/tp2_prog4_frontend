@@ -1,0 +1,28 @@
+name: Validacion Backend (Python)
+
+on:
+  push:
+    branches: ["main", "dev"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar Ruff
+        run: pip install ruff
+
+      - name: Ejecutar Linter (Ruff)
+        run: ruff check .

@@ -44,6 +44,7 @@ export const useApi = () => {
   }, []);
   return {
     participantes,
+    setParticipantes,
     loadingParticipantes,
     errorParticipantes,
     opciones,

@@ -153,21 +153,27 @@ export const FormularioRegistro = () => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className={labelClass}>Modalidad</label>
-            <select
-              id="modalidad"
-              name="modalidad"
-              className={selectClass}
-              onChange={handleChangeInput}
-              value={formData.modalidad}
-            >
-              <option value="">Seleciona modalidad</option>
+            <label className={labelClass}>Modalidad de asistencia</label>
+            <div className="flex gap-4 mt-1">
               {opciones.modalidades.map((modalidad) => (
-                <option value={modalidad} key={modalidad}>
-                  {modalidad}
-                </option>
+                <label
+                  key={modalidad}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="modalidad"
+                    value={modalidad}
+                    checked={formData.modalidad === modalidad}
+                    onChange={handleChangeInput}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    {modalidad}
+                  </span>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">
@@ -188,9 +194,9 @@ export const FormularioRegistro = () => {
             </select>
           </div>
 
-          <div className="flex flex-col gap-3 md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200 mt-2">
+          <div className="flex flex-col gap-3 md:col-span-2 bg-blue-50 p-4 rounded-lg border border-gray-200 mt-2">
             <label className={labelClass}>Tecnologías de Interés</label>
-            <div className="flex flex-wrap gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {opciones.tecnologias.map((tecnologia) => (
                 <label
                   key={tecnologia}
@@ -231,7 +237,7 @@ export const FormularioRegistro = () => {
           <div className="md:col-span-2 flex justify-end mt-4">
             <button
               type="submit"
-              className="bg-teal-700 hover:bg-teal-900 hover:cursor-pointer text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold shadow-md transition-all"
             >
               Registrar Participante
             </button>

@@ -1,4 +1,6 @@
-# Trabajo Practico: Programacion 4 (Frontend)
+# Trabajo Practico 3: Programacion 4 (Frontend)
+
+## useEffect + persistencia + componentizacion + logica derivada
 
 ## Profesor: Gerardo Magni
 

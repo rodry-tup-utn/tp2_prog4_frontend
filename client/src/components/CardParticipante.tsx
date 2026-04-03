@@ -33,13 +33,13 @@ export const CardParticipante = ({
       {/* Cuerpo: Detalles de Nivel y Modalidad */}
       <div className="bg-gray-50 rounded-xl p-3 mb-4 border border-gray-200 flex flex-col gap-2">
         <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-500">Modalidad:</span>
-          <span className="font-semibold text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200 shadow-sm">
+          <span className="text-gray-700">Modalidad:</span>
+          <span className="font-semibold text-gray-700 bg-white px-2 py-0.5 rounded tracking-wider border border-gray-200 shadow-sm">
             {participante.modalidad}
           </span>
         </div>
         <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-500">Nivel:</span>
+          <span className="text-gray-700">Nivel:</span>
           <span
             className={`font-semibold ${getNivelColor(participante.nivel)} px-2 py-1 tracking-wider rounded-xl border border-gray-200 shadow-sm`}
           >

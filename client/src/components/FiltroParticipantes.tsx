@@ -102,7 +102,7 @@ export const FiltroParticipantes = ({
           ))}
         </select>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-gray-500 uppercase ml-1">
           Eliminar Filtros
         </label>

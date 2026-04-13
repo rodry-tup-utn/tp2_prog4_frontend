@@ -58,7 +58,7 @@ export const useApi = () => {
     cargarOpciones();
   }, []);
 
-  const agregarParticipanteApi = async (data: IUsuario) => {
+  const agregarParticipante = async (data: IUsuario): Promise<boolean> => {
     try {
       await api.registrarUsuario(data);
       toast.success("Usuario registrado con exito");
@@ -73,7 +73,7 @@ export const useApi = () => {
   return {
     participantes,
     setParticipantes,
-    agregarParticipanteApi,
+    agregarParticipante,
     loadingParticipantes,
     errorParticipantes,
     opciones,

@@ -1,40 +1,31 @@
 import { useState } from "react";
 import { FilaParticipante } from "../components/FilaParticipante";
-import { useApi } from "../hooks/useApi";
 import { FiltroParticipantes } from "../components/FiltroParticipantes";
-import { useFiltros } from "../hooks/useFiltros";
 import { CardParticipante } from "../components/CardParticipante";
 import type { IUsuario } from "../types/usuario";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { toast } from "sonner";
 import { ToggleModo } from "../components/ToggleModo";
 import { MensajeError } from "../components/MensajeError";
 import { SpanTotal } from "../components/SpanTotal";
+import { useParticipantes } from "../context/ParticipantesContext";
 
 export const ListaParticipantes = () => {
   const {
     participantes,
+    participantesFiltrados,
+    filtros,
+    setFiltros,
+
     loadingParticipantes,
     errorParticipantes,
     opciones,
     errorOpciones,
-  } = useApi();
-  const { participantesLocal, quitarParticipanteLocal } = useLocalStorage();
+  } = useParticipantes();
   const [vista, setVista] = useState("tarjetas");
-  const [modo, setModo] = useState("local");
-
-  const participantesUsados =
-    modo === "api" ? participantes : participantesLocal;
-
-  const { filtros, setFiltros, participantesFiltrados } =
-    useFiltros(participantesUsados);
 
   const handleEliminarParticipante = (participante: IUsuario) => {
-    modo === "local"
-      ? quitarParticipanteLocal(participante)
-      : toast.warning(
-          "Funcion para borrar en base de datos próxima a desarrollar",
-        );
+    console.log(participante);
+    toast.warning("Funcion para borrar en base de datos próxima a desarrollar");
   };
 
   if (loadingParticipantes) {
@@ -50,18 +41,7 @@ export const ListaParticipantes = () => {
 
   return (
     <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 p-3 max-w-7xl mx-auto">
-      <div className="flex justify-around mb-6">
-        <ToggleModo
-          titulo="Modo Offline"
-          modoActual={modo}
-          cambiarModo={setModo}
-          modoUno="api"
-          modoDos="local"
-          estiloActivo="bg-purple-700 text-white shadow-sm"
-          modoUnoLabel="Modo API"
-          modoDosLabel="Modo Local"
-        />
-
+      <div className="flex justify-end mb-6">
         <ToggleModo
           titulo="Cambiar Vista"
           cambiarModo={setVista}
@@ -77,11 +57,7 @@ export const ListaParticipantes = () => {
         <h2 className="text-2xl font-bold text-white">Participantes</h2>
 
         <div className="flex gap-3">
-          <SpanTotal
-            label="Total"
-            valor={participantesUsados.length}
-            color="blue"
-          />
+          <SpanTotal label="Total" valor={participantes.length} color="blue" />
           <SpanTotal
             label="Filtrados"
             valor={participantesFiltrados.length}
@@ -141,17 +117,12 @@ export const ListaParticipantes = () => {
                 No se encontraron participantes con esos filtros
               </div>
             )}
-            {errorParticipantes &&
-              (modo === "api" ? (
-                <MensajeError
-                  titulo="Error al conectarse con la API"
-                  mensaje={errorParticipantes}
-                />
-              ) : (
-                <div className="p-6 text-gray-600 italic text-center">
-                  No se encontraron participantes con esos filtros
-                </div>
-              ))}
+            {errorParticipantes && (
+              <MensajeError
+                titulo="Error al conectarse con la API"
+                mensaje={errorParticipantes}
+              />
+            )}
           </>
         )}
       </div>

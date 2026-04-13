@@ -1,26 +1,17 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useApi } from "../hooks/useApi";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { ToggleModo } from "../components/ToggleModo";
 import { Formulario } from "../components/Formulario";
 import type { IUsuario } from "../types/usuario";
 import { MensajeError } from "../components/MensajeError";
+import { useParticipantes } from "../context/ParticipantesContext";
 
 export const FormularioRegistro = () => {
   const navigate = useNavigate();
-  const { opciones, loadingOpciones, errorOpciones } = useApi();
-  const { agregarParticipanteLocal } = useLocalStorage();
-  const { agregarParticipanteApi } = useApi();
-  const [modo, setModo] = useState("local");
+  const { opciones, loadingOpciones, errorOpciones, agregarParticipante } =
+    useParticipantes();
 
   const handleGuardarUsuario = async (datosNuevos: IUsuario) => {
-    let registrado = false;
-    if (modo === "local") {
-      registrado = agregarParticipanteLocal(datosNuevos);
-    } else {
-      registrado = await agregarParticipanteApi(datosNuevos);
-    }
+    const registrado = await agregarParticipante(datosNuevos);
+
     if (registrado) navigate("/participantes");
   };
 
@@ -39,16 +30,6 @@ export const FormularioRegistro = () => {
         <h2 className="text-2xl font-bold text-blue-900 mb-6 border-b border-gray-200 pb-3">
           Registro de Participante
         </h2>
-        <ToggleModo
-          titulo="Modo Offline"
-          cambiarModo={setModo}
-          modoActual={modo}
-          estiloActivo="bg-purple-700 text-white shadow-sm"
-          modoUno="local"
-          modoUnoLabel="Modo Local"
-          modoDos="api"
-          modoDosLabel="Modo API"
-        />
       </div>
 
       {loadingOpciones && (

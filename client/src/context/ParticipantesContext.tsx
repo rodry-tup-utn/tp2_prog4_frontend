@@ -9,13 +9,12 @@ interface ContextType {
   participantes: IUsuario[];
   participantesFiltrados: IUsuario[];
   loadingParticipantes: boolean;
-  setParticipantes: React.Dispatch<React.SetStateAction<IUsuario[]>>;
   errorParticipantes: string | null;
   opciones: IOpciones | null;
   errorOpciones: string | null;
   loadingOpciones: boolean;
-  agregarParticipante: (participante: IUsuario) => Promise<boolean>;
-  //eliminarParticipante: (id: string) => void;
+  agregarParticipante: (participante: IUsuario) => Promise<IUsuario>;
+  eliminarParticipante: (usuarioId: number) => Promise<IUsuario>;
   filtros: IFiltros;
   setFiltros: React.Dispatch<React.SetStateAction<IFiltros>>;
 }
@@ -38,8 +37,8 @@ export function ParticipantesProvider({
 }) {
   const {
     participantes,
-    setParticipantes,
     agregarParticipante,
+    eliminarParticipante,
     loadingParticipantes,
     opciones,
     loadingOpciones,
@@ -52,8 +51,8 @@ export function ParticipantesProvider({
   const contextValue: ContextType = {
     participantes,
     agregarParticipante,
+    eliminarParticipante,
     setFiltros,
-    setParticipantes,
     loadingParticipantes,
     opciones,
     errorOpciones,

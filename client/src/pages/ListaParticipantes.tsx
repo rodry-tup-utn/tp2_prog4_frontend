@@ -13,9 +13,9 @@ export const ListaParticipantes = () => {
   const {
     participantes,
     participantesFiltrados,
+    eliminarParticipante,
     filtros,
     setFiltros,
-
     loadingParticipantes,
     errorParticipantes,
     opciones,
@@ -24,8 +24,23 @@ export const ListaParticipantes = () => {
   const [vista, setVista] = useState("tarjetas");
 
   const handleEliminarParticipante = (participante: IUsuario) => {
-    console.log(participante);
-    toast.warning("Funcion para borrar en base de datos próxima a desarrollar");
+    toast(`¿Eliminar participante ${participante.nombre}?`, {
+      action: {
+        label: "Sí, eliminar",
+        onClick: async () => {
+          try {
+            const eliminado = await eliminarParticipante(participante.id!);
+            toast.success(`Participante ${eliminado.nombre} eliminado`);
+          } catch (error: any) {
+            toast.error(error.message || "No se pudo eliminar el usuario");
+          }
+        },
+      },
+      cancel: {
+        label: "Cancelar",
+        onClick: () => {},
+      },
+    });
   };
 
   if (loadingParticipantes) {
@@ -90,12 +105,19 @@ export const ListaParticipantes = () => {
                 participantesFiltrados.map((p) => (
                   <FilaParticipante key={p.id} participante={p} />
                 ))}
-              !
-              {!loadingParticipantes && !errorParticipantes && (
-                <div className="p-6 text-gray-600 italic text-center">
-                  No se encontraron participantes con esos filtros
-                </div>
-              )}
+
+              {!loadingParticipantes &&
+                !errorParticipantes &&
+                participantesFiltrados.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="p-6 text-red-800 italic text-xl text-center"
+                    >
+                      No se encontraron participantes con esos filtros
+                    </td>
+                  </tr>
+                )}
             </tbody>
           </table>
         )}
@@ -112,11 +134,13 @@ export const ListaParticipantes = () => {
                 ))}
               </div>
             )}
-            {!loadingParticipantes && !errorParticipantes && (
-              <div className="p-6 text-gray-600 italic text-center">
-                No se encontraron participantes con esos filtros
-              </div>
-            )}
+            {!loadingParticipantes &&
+              !errorParticipantes &&
+              participantesFiltrados.length === 0 && (
+                <div className="p-6 text-red-800 text-xl italic text-center">
+                  No se encontraron participantes con esos filtros
+                </div>
+              )}
             {errorParticipantes && (
               <MensajeError
                 titulo="Error al conectarse con la API"

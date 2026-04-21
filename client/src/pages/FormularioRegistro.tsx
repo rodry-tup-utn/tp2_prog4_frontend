@@ -3,6 +3,7 @@ import { Formulario } from "../components/Formulario";
 import type { IUsuario } from "../types/usuario";
 import { MensajeError } from "../components/MensajeError";
 import { useParticipantes } from "../context/ParticipantesContext";
+import { toast } from "sonner";
 
 export const FormularioRegistro = () => {
   const navigate = useNavigate();
@@ -10,9 +11,17 @@ export const FormularioRegistro = () => {
     useParticipantes();
 
   const handleGuardarUsuario = async (datosNuevos: IUsuario) => {
-    const registrado = await agregarParticipante(datosNuevos);
-
-    if (registrado) navigate("/participantes");
+    try {
+      const usuarioRegistrado = await agregarParticipante(datosNuevos);
+      toast.success(
+        `Usuario ${usuarioRegistrado.nombre} registrado exitosamente`,
+      );
+      navigate("/");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Error inesperado";
+      toast.error(message);
+    }
   };
 
   if (errorOpciones) {

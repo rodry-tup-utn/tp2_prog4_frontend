@@ -1,83 +1,87 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import type { IUsuario } from "../types/usuario";
 import { api } from "../services/api";
-import type { IOpciones } from "../types/opciones";
-import { toast } from "sonner";
+import { apiReducer } from "../reducers/apiREducer";
+import type { ApiState } from "../types/apiTypes";
+
+export const initialState: ApiState = {
+  participantes: [],
+  loadingParticipantes: true,
+  errorParticipantes: null,
+  opciones: null,
+  loadingOpciones: true,
+  errorOpciones: null,
+};
 export const useApi = () => {
-  const [participantes, setParticipantes] = useState<IUsuario[]>([]);
-  const [loadingParticipantes, setLoadingParticipantes] = useState(true);
-  const [errorParticipantes, setErrorParticipantes] = useState<string | null>(
-    null,
-  );
-  const [opciones, setOpciones] = useState<IOpciones | null>(null);
-  const [loadingOpciones, setLoadingOpciones] = useState(true);
-  const [errorOpciones, setErrorOpciones] = useState("");
-
+  const [state, dispatch] = useReducer(apiReducer, initialState);
   useEffect(() => {
-    const cargarParticipantes = async () => {
+    const cargarDatosIniciales = async () => {
       try {
-        const data = await api.obtenerUsuarios();
-        setParticipantes(data);
-      } catch (error: any) {
-        const mensaje = error.message || "Error al conectarse con el servidor";
-        setErrorParticipantes(mensaje);
-        console.error("Error:", error);
-      } finally {
-        setLoadingParticipantes(false);
+        const [usuarios, opciones] = await Promise.all([
+          api.obtenerUsuarios(),
+          api.obtenerOpciones(),
+        ]);
+
+        dispatch({
+          type: "FETCH_PARTICIPANTES_SUCCESS",
+          payload: usuarios,
+        });
+
+        dispatch({
+          type: "FETCH_OPCIONES_SUCCESS",
+          payload: opciones,
+        });
+      } catch (error: unknown) {
+        const mensaje =
+          error instanceof Error
+            ? error.message
+            : "Error al cargar datos iniciales";
+
+        console.error("Error inicial:", error);
+
+        dispatch({
+          type: "FETCH_PARTICIPANTES_ERROR",
+          payload: mensaje,
+        });
+
+        dispatch({
+          type: "FETCH_OPCIONES_ERROR",
+          payload: mensaje,
+        });
       }
     };
-    cargarParticipantes();
+
+    cargarDatosIniciales();
   }, []);
-
-  useEffect(() => {
-    const cargarOpciones = async () => {
-      let opcionesCargadas = false;
-      try {
-        const datosLocales = localStorage.getItem("opciones");
-        if (datosLocales) {
-          setOpciones(JSON.parse(datosLocales));
-          opcionesCargadas = true;
-        }
-
-        const data = await api.obtenerOpciones();
-        setOpciones(data);
-        localStorage.setItem("opciones", JSON.stringify(data));
-        opcionesCargadas = true;
-      } catch (error) {
-        if (!opcionesCargadas) {
-          setErrorOpciones("No se pudo cargar el archivo de opciones");
-          console.error("Error:", error);
-        }
-        console.warn(
-          "No pudo conectar con la API pero se cargaron los datos desde Local",
-        );
-      } finally {
-        setLoadingOpciones(false);
-      }
-    };
-    cargarOpciones();
-  }, []);
-
-  const agregarParticipante = async (data: IUsuario): Promise<boolean> => {
+  const agregarParticipante = async (data: IUsuario): Promise<IUsuario> => {
     try {
-      await api.registrarUsuario(data);
-      toast.success("Usuario registrado con exito");
-      return true;
+      const nuevoParticipante = await api.registrarUsuario(data);
+      dispatch({ type: "AGREGAR_PARTICIPANTE", payload: nuevoParticipante });
+      return nuevoParticipante;
     } catch (error) {
-      console.error("Error al registrar el usuario", error);
-      toast.error("No se pudo registrar el usuario");
-      return false;
+      console.log(error);
+      throw new Error("No se pudo agregar el participante");
+    }
+  };
+  const eliminarParticipante = async (idUsuario: number): Promise<IUsuario> => {
+    try {
+      const eliminado = await api.eliminarUsuario(idUsuario.toString());
+      if (!eliminado.id) throw new Error("Usuario sin id");
+      dispatch({ type: "ELIMINAR_PARTICIPANTE", payload: eliminado.id });
+      return eliminado;
+    } catch (error) {
+      throw error;
     }
   };
 
   return {
-    participantes,
-    setParticipantes,
+    participantes: state.participantes,
     agregarParticipante,
-    loadingParticipantes,
-    errorParticipantes,
-    opciones,
-    errorOpciones,
-    loadingOpciones,
+    eliminarParticipante,
+    loadingParticipantes: state.loadingParticipantes,
+    errorParticipantes: state.errorParticipantes,
+    opciones: state.opciones,
+    errorOpciones: state.errorOpciones,
+    loadingOpciones: state.loadingOpciones,
   };
 };

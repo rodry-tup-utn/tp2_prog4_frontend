@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import type { IUsuario } from "../types/usuario";
 import { api } from "../services/api";
-import { apiReducer } from "../reducers/apiREducer";
+import { apiReducer } from "../reducers/apiReducer";
 import type { ApiState } from "../types/apiTypes";
 
 export const initialState: ApiState = {

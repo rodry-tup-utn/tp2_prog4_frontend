@@ -43,4 +43,17 @@ export const api = {
 
     return response.json();
   },
+
+  eliminarUsuario: async (usuario_id: string): Promise<IUsuario> => {
+    const response = await fetch(`${API_URL}/usuarios/${usuario_id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Error al eliminar el usuario");
+    }
+
+    return response.json();
+  },
 };

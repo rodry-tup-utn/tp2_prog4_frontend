@@ -33,18 +33,15 @@ def get_by_id(session: Session, usuario_id: int) -> Usuario:
     usuario = session.get(Usuario, usuario_id)
 
     if not usuario:
-        raise ValueError("Usuario no encontrado")
+        raise ValueError(f"Usuario id {usuario_id} no encontrado")
 
     return usuario
 
 
 def eliminar_usuario(session: Session, usuario_id: int):
-    usuario = session.get(Usuario, usuario_id)
-
-    if not usuario:
-        raise ValueError("Usuario no encontrado")
+    usuario = get_by_id(session, usuario_id)
 
     session.delete(usuario)
     session.commit()
 
-    return True
+    return usuario

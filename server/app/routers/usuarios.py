@@ -24,3 +24,11 @@ def get_by_id(usuario_id: int, session: Session = Depends(get_session)):
         return usuario
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.delete("/{usuario_id}", response_model=UsuarioRead)
+def delete(usuario_id: int, session: Session = Depends(get_session)):
+    try:
+        return services.eliminar_usuario(session, usuario_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))

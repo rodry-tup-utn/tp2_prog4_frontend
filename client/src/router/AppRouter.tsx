@@ -5,9 +5,9 @@ import { ListaParticipantes } from "../pages/ListaParticipantes";
 export const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/" element={<FormularioRegistro />} />
+      <Route path="/nuevo" element={<FormularioRegistro />} />
 
-      <Route path="/participantes" element={<ListaParticipantes />} />
+      <Route path="/" element={<ListaParticipantes />} />
 
       <Route
         path="*"

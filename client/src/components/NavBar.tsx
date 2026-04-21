@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export const NavBar = () => {
   return (
-    <header className="bg-teal-600 text-white shadow-md">
+    <header className="bg-blue-900 text-white shadow-md sticky top-0">
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <h1 className="text-2xl font-bold tracking-wide">
           <Link to="/" className="hover:text-blue-200 transition-colors">
@@ -12,13 +12,13 @@ export const NavBar = () => {
 
         <div className="flex items-center gap-6">
           <Link
-            to="/participantes"
+            to="/"
             className="bg-teal-800 hover:bg-blue-900 px-4 py-2 rounded font-semibold transition-colors shadow-sm text-sm"
           >
             Ver Registrados
           </Link>
           <Link
-            to="/"
+            to="/nuevo"
             className="bg-teal-800 hover:bg-blue-900 px-4 py-2 rounded font-semibold transition-colors shadow-sm text-sm"
           >
             Formulario de Registro

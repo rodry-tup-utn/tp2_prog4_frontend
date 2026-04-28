@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { getNivelColor } from "../helpers/nivelStyle";
 import type { IUsuario } from "../types/usuario";
 
@@ -11,6 +12,7 @@ export const CardParticipante = ({
   handleEliminarParticipante,
 }: CardProps) => {
   const inicial = participante.nombre.charAt(0).toUpperCase();
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
@@ -70,12 +72,18 @@ export const CardParticipante = ({
           )}
         </div>
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-around">
+        <button
+          onClick={() => navigate(`/participante/${participante.id}`)}
+          className="bg-teal-600 text-white font-bold tracking-wider py-2 px-4 rounded-2xl hover:bg-teal-900 hover:cursor-pointer transition ease-in-out mt-3"
+        >
+          Editar
+        </button>
         <button
           onClick={() => handleEliminarParticipante(participante)}
-          className="bg-red-500 text-white font-bold tracking-wider w-fit  py-2 px-4 rounded-2xl hover:bg-red-800 hover:cursor-pointer transition ease-in-out mt-3"
+          className="bg-red-500 text-white font-bold tracking-wider  py-2 px-4 rounded-2xl hover:bg-red-800 hover:cursor-pointer transition ease-in-out mt-3"
         >
-          Eliminar participante
+          Eliminar
         </button>
       </div>
     </div>

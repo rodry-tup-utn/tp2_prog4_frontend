@@ -3,7 +3,6 @@ import type { IUsuario } from "../types/usuario";
 import { api } from "../services/api";
 import { apiReducer } from "../reducers/apiReducer";
 import type { ApiState } from "../types/apiTypes";
-
 export const initialState: ApiState = {
   participantes: [],
   loadingParticipantes: true,
@@ -63,6 +62,26 @@ export const useApi = () => {
       throw new Error("No se pudo agregar el participante");
     }
   };
+
+  const modificarParticipante = async (
+    data: IUsuario,
+    usuarioId: number,
+  ): Promise<IUsuario> => {
+    try {
+      const participanteActualizado = await api.actualizarUsuario(
+        usuarioId,
+        data,
+      );
+      dispatch({
+        type: "MODIFICAR_PARTICIPANTE",
+        payload: participanteActualizado,
+      });
+      return participanteActualizado;
+    } catch (error) {
+      console.log(error);
+      throw new Error(`No se pudo modificar el participante ${data.nombre}`);
+    }
+  };
   const eliminarParticipante = async (idUsuario: number): Promise<IUsuario> => {
     try {
       const eliminado = await api.eliminarUsuario(idUsuario.toString());
@@ -74,10 +93,17 @@ export const useApi = () => {
     }
   };
 
+  const cargarParticipantePorId = async (idUsuario: number) => {
+    const participante = await api.obtenerUsuarioPorId(idUsuario);
+    return participante;
+  };
+
   return {
     participantes: state.participantes,
     agregarParticipante,
     eliminarParticipante,
+    modificarParticipante,
+    cargarParticipantePorId,
     loadingParticipantes: state.loadingParticipantes,
     errorParticipantes: state.errorParticipantes,
     opciones: state.opciones,

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
 import type { IOpciones } from "../types/opciones";
 import type { IUsuario } from "../types/usuario";
+import { useUsuarioForm } from "../hooks/useUsuarioform";
 
 interface Props {
   opciones: IOpciones;
   onSubmit: (data: IUsuario) => void;
-  datosFormulario?: IUsuario; //a utilizar proximamente si se quiere modificar al usuario
+  datosFormulario: IUsuario | null;
 }
 
 //objeto vacio predeterminado
@@ -20,47 +20,17 @@ const PARTICIPANTE_VACIO: IUsuario = {
   acepta_terminos: false,
 };
 
-export const Formulario = ({
-  opciones,
-  onSubmit,
-  datosFormulario = PARTICIPANTE_VACIO,
-}: Props) => {
-  const [formData, setFormData] = useState<IUsuario>(datosFormulario);
+export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
+  const { formData, handleChange, handleTechChange } = useUsuarioForm(
+    datosFormulario,
+    PARTICIPANTE_VACIO,
+  );
+
   const labelClass = "text-sm font-semibold text-gray-700";
   const inputClass =
     "border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all";
   const selectClass =
     "border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none bg-white text-gray-700";
-
-  const handleChangeInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value, type } = e.target;
-
-    // capturamos el checked en vez del value en checkbox
-    if (type === "checkbox" && name === "acepta_terminos") {
-      setFormData((prev) => ({
-        ...prev,
-        acepta_terminos: (e.target as HTMLInputElement).checked,
-      }));
-      return;
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleTechChange = (tech: string) => {
-    setFormData((prev) => {
-      const tieneTech = prev.tecnologias.includes(tech);
-      return {
-        ...prev,
-        // Si ya la tiene, la saca. Si no la tiene, la agrega al array.
-        tecnologias: tieneTech
-          ? prev.tecnologias.filter((t) => t !== tech)
-          : [...prev.tecnologias, tech],
-      };
-    });
-  };
 
   const handleRegistrarUsuario = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -72,11 +42,11 @@ export const Formulario = ({
       onSubmit={handleRegistrarUsuario}
     >
       {/* Para proxima funcionalidad de edicion */}
-      {datosFormulario.id && (
+      {formData.id && (
         <div className="md:col-span-2 mb-2">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
             ID del Participante:{" "}
-            <span className="text-gray-900 ml-1">{datosFormulario.id}</span>
+            <span className="text-gray-900 ml-1">{formData.id}</span>
           </p>
         </div>
       )}
@@ -86,7 +56,7 @@ export const Formulario = ({
           type="text"
           className={inputClass}
           placeholder="Juan Perez"
-          onChange={handleChangeInput}
+          onChange={handleChange}
           id="nombre"
           name="nombre"
           value={formData.nombre}
@@ -100,7 +70,7 @@ export const Formulario = ({
           name="email"
           className={inputClass}
           placeholder="correo@ejemplo.com"
-          onChange={handleChangeInput}
+          onChange={handleChange}
           value={formData.email}
         />
       </div>
@@ -113,7 +83,7 @@ export const Formulario = ({
           max="99"
           className={inputClass}
           placeholder="Ingresa tu edad"
-          onChange={handleChangeInput}
+          onChange={handleChange}
           value={formData.edad}
         />
       </div>
@@ -121,7 +91,7 @@ export const Formulario = ({
         <label className={labelClass}>País</label>
         <select
           className={selectClass}
-          onChange={handleChangeInput}
+          onChange={handleChange}
           id="pais"
           name="pais"
           value={formData.pais}
@@ -149,7 +119,7 @@ export const Formulario = ({
                 name="modalidad"
                 value={modalidad}
                 checked={formData.modalidad === modalidad}
-                onChange={handleChangeInput}
+                onChange={handleChange}
                 className="w-4 h-4 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-700">
@@ -163,7 +133,7 @@ export const Formulario = ({
         <label className={labelClass}>Nivel de Experiencia</label>
         <select
           className={selectClass}
-          onChange={handleChangeInput}
+          onChange={handleChange}
           id="nivel"
           name="nivel"
           value={formData.nivel}
@@ -186,7 +156,7 @@ export const Formulario = ({
             >
               <input
                 type="checkbox"
-                id="terminos"
+                id="tecnologias"
                 name="tecnologias"
                 onChange={() => handleTechChange(tecnologia)}
                 className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
@@ -205,7 +175,7 @@ export const Formulario = ({
           name="acepta_terminos"
           className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
           checked={formData.acepta_terminos}
-          onChange={handleChangeInput}
+          onChange={handleChange}
         />
         <label
           htmlFor="terminos"
@@ -219,7 +189,7 @@ export const Formulario = ({
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold shadow-md transition-all"
         >
-          Registrar Participante
+          {datosFormulario ? "Editar Participante" : "Registrar Participante"}
         </button>
       </div>
     </form>

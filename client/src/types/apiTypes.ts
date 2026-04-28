@@ -3,6 +3,7 @@ import type { IUsuario } from "./usuario";
 
 export type ApiAction =
   | { type: "AGREGAR_PARTICIPANTE"; payload: IUsuario }
+  | { type: "MODIFICAR_PARTICIPANTE"; payload: IUsuario }
   | { type: "ELIMINAR_PARTICIPANTE"; payload: number }
   | { type: "FETCH_PARTICIPANTES_SUCCESS"; payload: IUsuario[] }
   | { type: "FETCH_PARTICIPANTES_ERROR"; payload: string }

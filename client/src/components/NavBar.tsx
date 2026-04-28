@@ -6,7 +6,7 @@ export const NavBar = () => {
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <h1 className="text-2xl font-bold tracking-wide">
           <Link to="/" className="hover:text-blue-200 transition-colors">
-            Trabajo Practico 2: React y TypeScript
+            Trabajo Practico 6: React y TypeScript
           </Link>
         </h1>
 
@@ -18,7 +18,7 @@ export const NavBar = () => {
             Ver Registrados
           </Link>
           <Link
-            to="/nuevo"
+            to="/participante"
             className="bg-teal-800 hover:bg-blue-900 px-4 py-2 rounded font-semibold transition-colors shadow-sm text-sm"
           >
             Formulario de Registro

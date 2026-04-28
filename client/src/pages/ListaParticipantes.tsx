@@ -8,19 +8,19 @@ import { ToggleModo } from "../components/ToggleModo";
 import { MensajeError } from "../components/MensajeError";
 import { SpanTotal } from "../components/SpanTotal";
 import { useParticipantes } from "../context/ParticipantesContext";
+import { useParticipantesFiltrados } from "../hooks/useParticipantesFiltrados";
 
 export const ListaParticipantes = () => {
   const {
     participantes,
-    participantesFiltrados,
-    eliminarParticipante,
-    filtros,
-    setFiltros,
+    opciones,
     loadingParticipantes,
     errorParticipantes,
-    opciones,
     errorOpciones,
+    loadingOpciones,
+    eliminarParticipante,
   } = useParticipantes();
+  const { participantesFiltrados } = useParticipantesFiltrados(participantes);
   const [vista, setVista] = useState("tarjetas");
 
   const handleEliminarParticipante = (participante: IUsuario) => {
@@ -44,8 +44,9 @@ export const ListaParticipantes = () => {
   };
 
   if (loadingParticipantes) {
-    return <div className="text-center py-10">Cargando lista...</div>;
+    return <div className="text-center py-10">Cargando participantes...</div>;
   }
+
   if (errorOpciones)
     return (
       <MensajeError
@@ -82,12 +83,8 @@ export const ListaParticipantes = () => {
       </div>
 
       <div className="overflow-x-auto">
-        {opciones && (
-          <FiltroParticipantes
-            filtros={filtros}
-            opciones={opciones}
-            setFiltros={setFiltros}
-          />
+        {opciones && !loadingOpciones && (
+          <FiltroParticipantes opciones={opciones} />
         )}
         {vista === "tabla" && (
           <table className="w-full text-left border-collapse">

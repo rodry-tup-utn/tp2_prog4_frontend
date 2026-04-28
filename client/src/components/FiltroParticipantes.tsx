@@ -1,27 +1,22 @@
-import type { IFiltros } from "../types/filtros";
+import { useFiltros } from "../context/FiltrosContext";
 import type { IOpciones } from "../types/opciones";
 
-interface FiltrosProps {
-  filtros: IFiltros;
-  setFiltros: (nuevosFiltros: IFiltros) => void;
+interface Props {
   opciones: IOpciones;
 }
 
-export const FiltroParticipantes = ({
-  filtros,
-  setFiltros,
-  opciones,
-}: FiltrosProps) => {
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+export const FiltroParticipantes = ({ opciones }: Props) => {
+  if (!opciones) return null;
+  const { filtros, setFiltros } = useFiltros();
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
-    const { name, value } = e.target;
     setFiltros({
       ...filtros,
-      [name]: value,
+      [e.target.name]: e.target.value,
     });
   };
-
   const handleEliminarFiltros = () => {
     setFiltros({ busqueda: "", modalidad: "", nivel: "", tecnologia: "" });
   };
@@ -39,7 +34,7 @@ export const FiltroParticipantes = ({
           type="text"
           name="busqueda"
           value={filtros.busqueda}
-          onChange={handleInputChange}
+          onChange={handleChange}
           placeholder="Ej: Juan Perez..."
           className={selectClass}
         />
@@ -52,11 +47,11 @@ export const FiltroParticipantes = ({
         <select
           name="modalidad"
           value={filtros.modalidad}
-          onChange={handleInputChange}
+          onChange={handleChange}
           className={selectClass}
         >
           <option value="">Todas</option>
-          {opciones.modalidades.map((m) => (
+          {opciones.modalidades.map((m: string) => (
             <option key={m} value={m}>
               {m}
             </option>
@@ -71,11 +66,11 @@ export const FiltroParticipantes = ({
         <select
           name="nivel"
           value={filtros.nivel}
-          onChange={handleInputChange}
+          onChange={handleChange}
           className={selectClass}
         >
           <option value="">Todos</option>
-          {opciones.niveles.map((n) => (
+          {opciones.niveles.map((n: any) => (
             <option key={n} value={n}>
               {n}
             </option>
@@ -91,7 +86,7 @@ export const FiltroParticipantes = ({
         <select
           name="tecnologia"
           value={filtros.tecnologia}
-          onChange={handleInputChange}
+          onChange={handleChange}
           className={selectClass}
         >
           <option value="">Todas</option>

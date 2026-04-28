@@ -1,7 +1,8 @@
 from sqlmodel import Session, select
 from models import Usuario
-from schemas import UsuarioCreate
+from schemas import UsuarioCreate, UsuarioUpdate, UsuarioRead
 from typing import Sequence
+from fastapi import status, HTTPException
 
 
 def registrar_usuario(session: Session, data: UsuarioCreate) -> Usuario:
@@ -19,29 +20,60 @@ def registrar_usuario(session: Session, data: UsuarioCreate) -> Usuario:
     return nuevo_usuario
 
 
-def get_all(session: Session) -> Sequence[Usuario]:
+def get_all(session: Session) -> Sequence[UsuarioRead]:
     statement = select(Usuario)
 
     result = session.exec(statement)
 
     usuarios_db = result.all()
 
-    return usuarios_db
+    result = [UsuarioRead.model_validate(u) for u in usuarios_db]
+
+    return result
 
 
-def get_by_id(session: Session, usuario_id: int) -> Usuario:
+def get_by_id_or_404(session: Session, usuario_id) -> Usuario:
     usuario = session.get(Usuario, usuario_id)
 
     if not usuario:
-        raise ValueError(f"Usuario id {usuario_id} no encontrado")
-
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, f"Usuario id {usuario_id} no encontrado"
+        )
     return usuario
 
 
-def eliminar_usuario(session: Session, usuario_id: int):
+def get_by_id(session: Session, usuario_id: int) -> UsuarioRead:
+    usuario = get_by_id_or_404(session, usuario_id)
+
+    return UsuarioRead.model_validate(usuario)
+
+
+def eliminar_usuario(session: Session, usuario_id: int) -> UsuarioRead:
     usuario = get_by_id(session, usuario_id)
 
     session.delete(usuario)
     session.commit()
+    result = UsuarioRead.model_validate(usuario)
 
-    return usuario
+    return result
+
+
+def actualizar_usuario(
+    session: Session, usuario_id: int, data: UsuarioUpdate
+) -> UsuarioRead:
+    usuario = get_by_id_or_404(session, usuario_id)
+
+    update_data = data.model_dump(exclude_unset=True)
+    if "tecnologias" in update_data and data.tecnologias:
+        update_data["tecnologias"] = ",".join([t.value for t in data.tecnologias])
+
+    for key, value in update_data.items():
+        setattr(usuario, key, value)
+
+    session.add(usuario)
+    session.commit()
+    session.refresh(usuario)
+
+    result = UsuarioRead.model_validate(usuario)
+
+    return result

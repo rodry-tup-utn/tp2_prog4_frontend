@@ -48,6 +48,17 @@ class UsuarioCreate(UsuarioBase):
     pass
 
 
+class UsuarioUpdate(SQLModel):
+    nombre: None | str
+    email: None | str
+    edad: None | int
+    pais: None | PaisEnum
+    modalidad: None | ModalidadEnum
+    tecnologias: None | List[TecnologiaEnum]
+    nivel: None | NivelExpEnum
+    acepta_terminos: bool | None
+
+
 class UsuarioRead(UsuarioBase):
     model_config = {"from_attributes": True}
     id: int

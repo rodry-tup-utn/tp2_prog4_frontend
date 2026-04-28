@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 import services
 from database import get_session
 from sqlmodel import Session
-from schemas import UsuarioRead, UsuarioCreate
+from schemas import UsuarioRead, UsuarioCreate, UsuarioUpdate
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
 
@@ -32,3 +32,8 @@ def delete(usuario_id: int, session: Session = Depends(get_session)):
         return services.eliminar_usuario(session, usuario_id)
     except ValueError as e:
         raise HTTPException(404, str(e))
+
+
+@router.patch("/{id}")
+def update(id: int, data: UsuarioUpdate, session: Session = Depends(get_session)):
+    return services.actualizar_usuario(session, id, data)

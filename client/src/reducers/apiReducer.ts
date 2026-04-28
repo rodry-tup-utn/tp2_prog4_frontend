@@ -21,6 +21,14 @@ export function apiReducer(state: ApiState, action: ApiAction): ApiState {
         participantes: [...state.participantes, action.payload],
       };
 
+    case "MODIFICAR_PARTICIPANTE":
+      return {
+        ...state,
+        participantes: state.participantes.map((p) =>
+          p.id === action.payload.id ? action.payload : p,
+        ),
+      };
+
     case "FETCH_OPCIONES_SUCCESS":
       return { ...state, loadingOpciones: false, opciones: action.payload };
     case "FETCH_OPCIONES_ERROR":

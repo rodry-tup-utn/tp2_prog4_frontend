@@ -19,7 +19,7 @@ export const api = {
       );
     return res.json();
   },
-  obtenerUsuarioPorId: async (idUsuario: string): Promise<IUsuario> => {
+  obtenerUsuarioPorId: async (idUsuario: number): Promise<IUsuario> => {
     const res = await fetch(`${API_URL}/usuarios/${idUsuario}`);
     if (!res.ok) throw new Error(`Error al obtener el usuario ${idUsuario}`);
     return res.json();
@@ -52,6 +52,24 @@ export const api = {
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.detail || "Error al eliminar el usuario");
+    }
+
+    return response.json();
+  },
+  actualizarUsuario: async (
+    usuarioId: number,
+    data: IUsuario,
+  ): Promise<IUsuario> => {
+    const response = await fetch(`${API_URL}/usuarios/${usuarioId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Error al registrar participante");
     }
 
     return response.json();

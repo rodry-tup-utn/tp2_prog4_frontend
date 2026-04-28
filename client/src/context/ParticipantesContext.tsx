@@ -12,6 +12,11 @@ interface ContextType {
   loadingOpciones: boolean;
   agregarParticipante: (participante: IUsuario) => Promise<IUsuario>;
   eliminarParticipante: (usuarioId: number) => Promise<IUsuario>;
+  cargarParticipantePorId: (participanteId: number) => Promise<IUsuario>;
+  modificarParticipante: (
+    data: IUsuario,
+    idUsuario: number,
+  ) => Promise<IUsuario>;
 }
 
 const ParticipantesContext = createContext<ContextType | null>(null);
@@ -34,6 +39,8 @@ export function ParticipantesProvider({
     participantes,
     agregarParticipante,
     eliminarParticipante,
+    cargarParticipantePorId,
+    modificarParticipante,
     loadingParticipantes,
     opciones,
     loadingOpciones,
@@ -45,6 +52,8 @@ export function ParticipantesProvider({
     participantes,
     agregarParticipante,
     eliminarParticipante,
+    cargarParticipantePorId,
+    modificarParticipante,
     loadingParticipantes,
     opciones,
     errorOpciones,

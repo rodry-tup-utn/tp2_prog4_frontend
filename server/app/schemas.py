@@ -69,3 +69,8 @@ class UsuarioRead(UsuarioBase):
         if isinstance(v, str):
             return v.split(",") if v else []
         return v
+
+
+class UsuarioList(SQLModel):
+    data: List[UsuarioRead]
+    total: int

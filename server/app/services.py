@@ -1,79 +1,79 @@
-from sqlmodel import Session, select
+from sqlmodel import Session
 from models import Usuario
-from schemas import UsuarioCreate, UsuarioUpdate, UsuarioRead
-from typing import Sequence
+from schemas import UsuarioCreate, UsuarioUpdate, UsuarioRead, UsuarioList
 from fastapi import status, HTTPException
+from unit_of_work import UnitOfWork
 
 
-def registrar_usuario(session: Session, data: UsuarioCreate) -> Usuario:
-    user_data = data.model_dump()
+class UsuarioService:
+    _session: Session
 
-    if "tecnologias" in user_data:
-        user_data["tecnologias"] = ",".join([t.value for t in data.tecnologias])
+    def __init__(self, session: Session) -> None:
+        self._session = session
 
-    nuevo_usuario = Usuario.model_validate(user_data)
+    def get_all(
+        self,
+        offset: int = 0,
+        limit: int = 8,
+        busqueda: str = "",
+        modalidad: str = "",
+        nivel: str = "",
+        tecnologia: str = "",
+    ) -> UsuarioList:
+        with UnitOfWork(self._session) as uow:
+            usuarios = uow.usuarios.get_all(
+                offset, limit, busqueda, modalidad, nivel, tecnologia
+            )
+            total = uow.usuarios.count(busqueda, modalidad, nivel, tecnologia)
 
-    session.add(nuevo_usuario)
-    session.commit()
-    session.refresh(nuevo_usuario)
+            data = [UsuarioRead.model_validate(usuario) for usuario in usuarios]
 
-    return nuevo_usuario
+            return UsuarioList(data=data, total=total)
 
+    def add(self, data: UsuarioCreate) -> Usuario:
+        user_data = data.model_dump(mode="json")
 
-def get_all(session: Session) -> Sequence[UsuarioRead]:
-    statement = select(Usuario)
+        if "tecnologias" in user_data:
+            user_data["tecnologias"] = ",".join(user_data["tecnologias"])
 
-    result = session.exec(statement)
+        nuevo_usuario = Usuario.model_validate(user_data)
 
-    usuarios_db = result.all()
+        with UnitOfWork(self._session) as uow:
+            uow.usuarios.add(nuevo_usuario)
 
-    result = [UsuarioRead.model_validate(u) for u in usuarios_db]
+        self._session.refresh(nuevo_usuario)
+        return nuevo_usuario
 
-    return result
+    def _get_or_404(self, uow: UnitOfWork, id: int):
+        usuario = uow.usuarios.get_by_id(id)
+        if not usuario:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, f"Usuario id {id} no encontrado "
+            )
+        return usuario
 
+    def get_by_id(self, id: int) -> UsuarioRead:
+        with UnitOfWork(self._session) as uow:
+            usuario = self._get_or_404(uow, id)
+            result = UsuarioRead.model_validate(usuario)
 
-def get_by_id_or_404(session: Session, usuario_id) -> Usuario:
-    usuario = session.get(Usuario, usuario_id)
+        return result
 
-    if not usuario:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, f"Usuario id {usuario_id} no encontrado"
-        )
-    return usuario
+    def eliminar(self, id: int):
+        with UnitOfWork(self._session) as uow:
+            usuario = self._get_or_404(uow, id)
+            uow.usuarios.delete(usuario)
+        return
 
-
-def get_by_id(session: Session, usuario_id: int) -> UsuarioRead:
-    usuario = get_by_id_or_404(session, usuario_id)
-
-    return UsuarioRead.model_validate(usuario)
-
-
-def eliminar_usuario(session: Session, usuario_id: int) -> UsuarioRead:
-    usuario = get_by_id(session, usuario_id)
-
-    session.delete(usuario)
-    session.commit()
-    result = UsuarioRead.model_validate(usuario)
-
-    return result
-
-
-def actualizar_usuario(
-    session: Session, usuario_id: int, data: UsuarioUpdate
-) -> UsuarioRead:
-    usuario = get_by_id_or_404(session, usuario_id)
-
-    update_data = data.model_dump(exclude_unset=True)
-    if "tecnologias" in update_data and data.tecnologias:
-        update_data["tecnologias"] = ",".join([t.value for t in data.tecnologias])
-
-    for key, value in update_data.items():
-        setattr(usuario, key, value)
-
-    session.add(usuario)
-    session.commit()
-    session.refresh(usuario)
-
-    result = UsuarioRead.model_validate(usuario)
-
-    return result
+    def update(self, id: int, data: UsuarioUpdate) -> UsuarioRead:
+        with UnitOfWork(self._session) as uow:
+            usuario = self._get_or_404(uow, id)
+            update_data = data.model_dump(mode="json", exclude_unset=True)
+            if "tecnologias" in update_data and data.tecnologias is not None:
+                update_data["tecnologias"] = ",".join(
+                    [t.value for t in data.tecnologias]
+                )
+            for key, value in update_data.items():
+                setattr(usuario, key, value)
+            result = UsuarioRead.model_validate(usuario)
+        return result

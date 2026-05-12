@@ -19,7 +19,6 @@ const PARTICIPANTE_VACIO: IUsuario = {
   tecnologias: [],
   acepta_terminos: false,
 };
-
 export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
   const { formData, handleChange, handleTechChange } = useUsuarioForm(
     datosFormulario,
@@ -60,6 +59,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
           id="nombre"
           name="nombre"
           value={formData.nombre}
+          required
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -72,6 +72,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
           placeholder="correo@ejemplo.com"
           onChange={handleChange}
           value={formData.email}
+          required
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -85,6 +86,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
           placeholder="Ingresa tu edad"
           onChange={handleChange}
           value={formData.edad}
+          required
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -95,6 +97,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
           id="pais"
           name="pais"
           value={formData.pais}
+          required
         >
           <option value="">Seleccione un país</option>
           {opciones.paises.map((pais) => {
@@ -121,6 +124,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
                 checked={formData.modalidad === modalidad}
                 onChange={handleChange}
                 className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                required
               />
               <span className="text-sm font-medium text-gray-700">
                 {modalidad}
@@ -137,6 +141,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
           id="nivel"
           name="nivel"
           value={formData.nivel}
+          required
         >
           <option value="">Selecciona tu nivel</option>
           {opciones.niveles.map((nivel) => (
@@ -176,6 +181,7 @@ export const Formulario = ({ opciones, onSubmit, datosFormulario }: Props) => {
           className="w-5 h-5 text-blue-600 rounded cursor-pointer focus:ring-blue-500"
           checked={formData.acepta_terminos}
           onChange={handleChange}
+          required
         />
         <label
           htmlFor="terminos"

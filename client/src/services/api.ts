@@ -1,5 +1,5 @@
 import type { IOpciones } from "../types/opciones";
-import type { IUsuario } from "../types/usuario";
+import type { IUsuario, IUsuarioList } from "../types/usuario";
 
 const API_URL = "http://localhost:8000";
 
@@ -11,8 +11,25 @@ export const api = {
     return res.json();
   },
 
-  obtenerUsuarios: async (): Promise<IUsuario[]> => {
-    const res = await fetch(`${API_URL}/usuarios/`);
+  obtenerUsuarios: async (
+    offset: number = 0,
+    limit: number = 8,
+    filtros?: {
+      busqueda?: string;
+      modalidad?: string;
+      nivel?: string;
+      tecnologia?: string;
+    },
+  ): Promise<IUsuarioList> => {
+    const params = new URLSearchParams({
+      offset: String(offset),
+      limit: String(limit),
+    });
+    if (filtros?.busqueda) params.append("busqueda", filtros.busqueda);
+    if (filtros?.modalidad) params.append("modalidad", filtros.modalidad);
+    if (filtros?.nivel) params.append("nivel", filtros.nivel);
+    if (filtros?.tecnologia) params.append("tecnologia", filtros.tecnologia);
+    const res = await fetch(`${API_URL}/usuarios/?${params}`);
     if (!res.ok)
       throw new Error(
         "Error al obtener los usuarios registrados del formulario",
@@ -44,7 +61,7 @@ export const api = {
     return response.json();
   },
 
-  eliminarUsuario: async (usuario_id: string): Promise<IUsuario> => {
+  eliminarUsuario: async (usuario_id: string): Promise<boolean> => {
     const response = await fetch(`${API_URL}/usuarios/${usuario_id}`, {
       method: "DELETE",
     });
@@ -53,8 +70,7 @@ export const api = {
       const errorData = await response.json();
       throw new Error(errorData.detail || "Error al eliminar el usuario");
     }
-
-    return response.json();
+    return true;
   },
   actualizarUsuario: async (
     usuarioId: number,

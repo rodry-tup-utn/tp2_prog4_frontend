@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { FilaParticipante } from "../components/FilaParticipante";
 import { FiltroParticipantes } from "../components/FiltroParticipantes";
 import { CardParticipante } from "../components/CardParticipante";
@@ -8,6 +9,7 @@ import { ToggleModo } from "../components/ToggleModo";
 import { MensajeError } from "../components/MensajeError";
 import { SpanTotal } from "../components/SpanTotal";
 import { useParticipantes } from "../context/ParticipantesContext";
+import { useAuth } from "../context/AuthContext";
 
 export const ListaParticipantes = () => {
   const {
@@ -27,6 +29,9 @@ export const ListaParticipantes = () => {
     setFiltros,
   } = useParticipantes();
 
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
+
   const [vista, setVista] = useState("tarjetas");
 
   const paginaActual = Math.floor(offset / limit) + 1;
@@ -39,8 +44,8 @@ export const ListaParticipantes = () => {
         label: "Sí, eliminar",
         onClick: async () => {
           try {
-            const eliminado = await eliminarParticipante(participante.id!);
-            toast.success(`Participante ${eliminado.nombre} eliminado`);
+            await eliminarParticipante(participante.id!);
+            toast.success(`Participante ${participante.nombre} eliminado`);
           } catch (error: any) {
             toast.error(error.message || "No se pudo eliminar el usuario");
           }
@@ -97,6 +102,14 @@ export const ListaParticipantes = () => {
             color="teal"
           />
         </div>
+        {isAdmin && (
+          <Link
+            to="/participante"
+            className="bg-amber-400 hover:bg-amber-500 text-amber-900 font-bold px-5 py-2 rounded-xl transition-all shadow-sm text-sm"
+          >
+            + Nuevo Participante
+          </Link>
+        )}
       </div>
 
       <div className="overflow-x-auto">
@@ -118,11 +131,16 @@ export const ListaParticipantes = () => {
                   <th className="px-6 py-4">Edad</th>
                   <th className="px-6 py-4">País</th>
                   <th className="px-6 py-4">Tecnologías</th>
+                  {isAdmin && <th className="px-4 py-4">Acciones</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {participantes.map((p) => (
-                  <FilaParticipante key={p.id} participante={p} />
+                  <FilaParticipante
+                    key={p.id}
+                    participante={p}
+                    handleEliminarParticipante={handleEliminarParticipante}
+                  />
                 ))}
               </tbody>
             </table>

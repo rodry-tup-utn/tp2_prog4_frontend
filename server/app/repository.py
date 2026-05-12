@@ -62,3 +62,13 @@ class UsuarioRepository:
         )
         statement = statement.offset(offset).limit(limit)
         return self.session.exec(statement).all()
+
+    def add(self, data) -> Usuario:
+        self.session.add(data)
+        self.session.flush()
+        self.session.refresh(data)
+        return data
+
+    def delete(self, usuario: Usuario):
+        self.session.delete(usuario)
+        self.session.flush()

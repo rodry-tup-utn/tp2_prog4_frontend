@@ -9,3 +9,8 @@ export interface IUsuario {
   nivel: string;
   acepta_terminos: boolean;
 }
+
+export interface IUsuarioList {
+  data: IUsuario[];
+  total: number;
+}

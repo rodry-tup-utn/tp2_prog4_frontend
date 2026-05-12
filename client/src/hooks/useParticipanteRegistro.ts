@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useParticipantes } from "../context/ParticipantesContext";
 import type { IUsuario } from "../types/usuario";
-import { apiReducer } from "../reducers/apiReducer";
 
 export const useParticipanteRegistro = () => {
   const navigate = useNavigate();

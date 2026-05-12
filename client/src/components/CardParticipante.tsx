@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { getNivelColor } from "../helpers/nivelStyle";
 import type { IUsuario } from "../types/usuario";
+import { useAuth } from "../context/AuthContext";
 
 interface CardProps {
   participante: IUsuario;
@@ -13,12 +14,12 @@ export const CardParticipante = ({
 }: CardProps) => {
   const inicial = participante.nombre.charAt(0).toUpperCase();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
-      {/* Cabecera: Avatar y Nombre */}
       <div className="flex items-center gap-4 mb-4">
-        {/* Círculo del Avatar */}
         <div className="w-12 h-12 rounded-full bg-linear-to-br from-blue-400 to-indigo-700 flex items-center justify-center text-white font-bold text-xl shrink-0 shadow-inner">
           {inicial}
         </div>
@@ -32,7 +33,6 @@ export const CardParticipante = ({
         </div>
       </div>
 
-      {/* Cuerpo: Detalles de Nivel y Modalidad */}
       <div className="bg-gray-50 rounded-xl p-3 mb-4 border border-gray-200 flex flex-col gap-2">
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-700">Modalidad:</span>
@@ -50,7 +50,6 @@ export const CardParticipante = ({
         </div>
       </div>
 
-      {/* Footer: Tecnologías (Empujado hacia abajo con mt-auto por si los nombres son largos) */}
       <div className="mt-auto pt-2">
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
           Stack Tecnológico
@@ -72,20 +71,22 @@ export const CardParticipante = ({
           )}
         </div>
       </div>
-      <div className="flex justify-around">
-        <button
-          onClick={() => navigate(`/participante/${participante.id}`)}
-          className="bg-teal-600 text-white font-bold tracking-wider py-2 px-4 rounded-2xl hover:bg-teal-900 hover:cursor-pointer transition ease-in-out mt-3"
-        >
-          Editar
-        </button>
-        <button
-          onClick={() => handleEliminarParticipante(participante)}
-          className="bg-red-500 text-white font-bold tracking-wider  py-2 px-4 rounded-2xl hover:bg-red-800 hover:cursor-pointer transition ease-in-out mt-3"
-        >
-          Eliminar
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="flex justify-around">
+          <button
+            onClick={() => navigate(`/participante/${participante.id}`)}
+            className="bg-teal-600 text-white font-bold tracking-wider py-2 px-4 rounded-2xl hover:bg-teal-900 hover:cursor-pointer transition ease-in-out mt-3"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => handleEliminarParticipante(participante)}
+            className="bg-red-500 text-white font-bold tracking-wider  py-2 px-4 rounded-2xl hover:bg-red-800 hover:cursor-pointer transition ease-in-out mt-3"
+          >
+            Eliminar
+          </button>
+        </div>
+      )}
     </div>
   );
 };

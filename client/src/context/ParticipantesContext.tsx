@@ -17,7 +17,7 @@ interface ContextType {
   filtros: IFiltros;
   setFiltros: (filtros: IFiltros) => void;
   agregarParticipante: (participante: IUsuario) => Promise<IUsuario>;
-  eliminarParticipante: (usuarioId: number) => Promise<IUsuario>;
+  eliminarParticipante: (usuarioId: number) => Promise<boolean>;
   cargarParticipantePorId: (participanteId: number) => Promise<IUsuario>;
   modificarParticipante: (
     data: IUsuario,

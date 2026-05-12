@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev:backend": "cd server/app && . ../.venv/bin/activate && uvicorn main:app --reload",
+    "dev:backend": "uvicorn app.main:app --reload --app-dir server/",
     "dev:frontend": "cd client && pnpm dev",
     "dev": "concurrently \"pnpm dev:backend\" \"pnpm dev:frontend\""
   },
